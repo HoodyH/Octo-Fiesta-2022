@@ -1,5 +1,5 @@
-
-MAP = """A D M I R E D F G N I L L O R Z R Q E A C A S U O V R E N J L W F S E V E R A L Y Y N V R 
+Grid:
+A D M I R E D F G N I L L O R Z R Q E A C A S U O V R E N J L W F S E V E R A L Y Y N V R 
 G Y D O T S U C O R P F Y L H T O O M S V C C Y L F R E T T U B P U W T W E L C O M E M I 
 E E V E N I N G C S U Z N L E R U T X I M C V I J H N X U S U R P A T E D G N I L L I H S 
 N C L A P P E D C E F T X W U E C N A T P E R A P P R O A C H R U E I R E D O P H P H Y M 
@@ -43,9 +43,11 @@ N R S G W R E K C I P G A R E R A M M A R G N E I I C L I Z A T I O N P O T N N 
 C A D R E R E F F U S K B V Q R U B K S M O E J N N F I V D E H S I N R U F I I D N S N P 
 E E N M H X F G N I M O C E B J E V S U B H R P X Z G V R T D G N I H S I W G P N R G U I 
 Z T A J I D E R E W O L F C W B Q D A R F I F T E E N I Z H E A R T H R U G Y M M G E K R 
-N L H S D C H Y Z X E T A M S S A L C R O U N D E D S C A P P L A U S E T W E L F T H D D"""
+N L H S D C H Y Z X E T A M S S A L C R O U N D E D S C A P P L A U S E T W E L F T H D D 
 
-WORDS_RAW = """INTERRUPTING
+
+Words:
+INTERRUPTING
 GRAMMAR
 WISHING
 CIVILIZATION
@@ -194,142 +196,4 @@ LOOKOUT
 GRUMBLE
 NONSENSE
 DOORWAY
-AGAINST"""
-
-
-class Finder:
-
-    def __init__(self, matrix, words):
-        self.matrix = matrix
-        self.words = words
-
-        self.row_len = len(self.matrix)
-        self.col_len = len(self.matrix[0])
-
-        print(self.row_len, self.col_len)
-
-    def find_and_replace_vertical(self):
-        # find vertical words
-        for word in self.words:
-
-            for col_idx in range(self.col_len):
-                for row_idx in range(self.row_len):
-                    possible_world = ''
-
-                    for i in range(len(word)):
-                        try:
-                            possible_world += self.matrix[row_idx + i][col_idx]
-                        except IndexError:
-                            break
-
-                    if possible_world == word:
-                        # replace found word with dashes
-                        for i in range(len(word)):
-                            self.matrix[row_idx + i][col_idx] = '-'
-
-    def find_and_replace_horizontal(self):
-        # find horizontal words
-        for word in self.words:
-            for row_idx in range(self.row_len):
-                for col_idx in range(self.col_len):
-                    possible_world = ''
-
-                    for i in range(len(word)):
-                        try:
-                            possible_world += self.matrix[row_idx][col_idx + i]
-                        except IndexError:
-                            break
-
-                    if possible_world == word:
-                        # replace found word with dashes
-                        for i in range(len(word)):
-                            self.matrix[row_idx][col_idx + i] = '-'
-
-    def find_and_replace_diagonal(self):
-        # find diagonal words
-        for word in self.words:
-            for row_idx in range(self.row_len):
-                for col_idx in range(self.col_len):
-                    possible_world = ''
-
-                    for i in range(len(word)):
-                        try:
-                            possible_world += self.matrix[row_idx + i][col_idx + i]
-                        except IndexError:
-                            break
-
-                    if possible_world == word:
-                        # replace found word with dashes
-                        for i in range(len(word)):
-                            self.matrix[row_idx + i][col_idx + i] = '-'
-
-    def find_and_replace_diagonal_reverse(self):
-        # find diagonal words
-        for word in self.words:
-            for row_idx in range(self.row_len):
-                for col_idx in range(self.col_len):
-                    possible_world = ''
-
-                    for i in range(len(word)):
-                        try:
-                            possible_world += self.matrix[row_idx + i][col_idx - i]
-                        except IndexError:
-                            break
-
-                    if possible_world == word:
-                        # replace found word with dashes
-                        for i in range(len(word)):
-                            self.matrix[row_idx + i][col_idx - i] = '-'
-
-    def find_and_replace_l_shape(self):
-        # find L-shape words
-        for word in self.words:
-            for row_idx in range(1, self.row_len):
-                for col_idx in range(self.col_len):
-                    possible_word = ''
-                    for i in range(len(word)):
-                        currently_checked = 0
-                        for j in range(len(word)-i):
-                            try:
-                                possible_word += self.matrix[row_idx + i][col_idx + j]
-                                currently_checked += 1
-                            except IndexError:
-                                break
-
-                        if possible_word == word:
-                            # replace found word with dashes
-
-                            print('found', possible_word)
-
-                            for k in range(i):
-                                self.matrix[row_idx + k][col_idx] = '-'
-
-                            for k in range(len(word)-i):
-                                self.matrix[row_idx + i][col_idx + k] = '-'
-
-                            # replace the left vertical part
-
-                        else:
-                            # delete the index part
-                            possible_word = possible_word[:-currently_checked]
-
-    def print_matrix_as_string(self):
-        for row in self.matrix:
-            print(''.join(row))
-
-    def find(self):
-        # self.find_and_replace_vertical()
-        # self.find_and_replace_horizontal()
-        # self.find_and_replace_diagonal()
-        # self.find_and_replace_diagonal_reverse()
-        self.find_and_replace_l_shape()
-        self.print_matrix_as_string()
-
-
-if __name__ == '__main__':
-    # create a matrix from the MAP string
-    matrix_parsed = [list(line.replace(' ', '')) for line in MAP.split('\n') if line]
-    words_parsed = [word for word in WORDS_RAW.split('\n')]
-
-    f = Finder(matrix_parsed, words_parsed)
-    f.find()
+AGAINST
